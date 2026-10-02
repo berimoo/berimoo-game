@@ -1,0 +1,13 @@
+{
+  "name": "berimoo-game-app",
+  "version": "1.0.0",
+  "description": "بازی لودو بریمو (اپ اندروید)",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/splash-screen": "^8.0.2"
+  }
+}
