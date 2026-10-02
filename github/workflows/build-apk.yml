@@ -1,0 +1,58 @@
+name: ساخت APK بازی بریمو
+
+# بدون نیاز به Android Studio: کافیه این پروژه رو روی GitHub آپلود کنید،
+# بعد از تب Actions دکمه‌ی «Run workflow» رو بزنید.
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v4
+
+      - name: نصب Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: نصب Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: نصب Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: نصب وابستگی‌ها
+        run: npm install
+
+      - name: آماده‌سازی فایل بازی و مدل سه‌بعدی
+        run: |
+          cp game.html www/index.html
+          cp bari.glb www/bari.glb
+
+      - name: ساخت پروژه‌ی اندروید (اگه از قبل نبود)
+        run: |
+          if [ ! -d android ]; then npx cap add android; fi
+
+      - name: همگام‌سازی فایل‌ها با پروژه‌ی اندروید
+        run: npx cap sync android
+
+      - name: آماده‌سازی gradlew
+        run: chmod +x android/gradlew
+
+      - name: ساخت APK (نسخه‌ی تست)
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: ذخیره‌ی APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: berimoo-game-app
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 90
